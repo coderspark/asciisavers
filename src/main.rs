@@ -83,7 +83,7 @@ fn toasters() {
     enable_raw_mode().unwrap();
 
     loop {
-        print!("\x1b[3J");
+        stdout.execute(Clear(Purge)).unwrap();
         for toaster in toasters.clone() {
             printtoaster((toaster.0, toaster.1), toaster.2.floor() as i32);
             let idx = toasters.iter().position(|&r| r == toaster).unwrap();
