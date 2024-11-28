@@ -5,6 +5,7 @@ author      = "Coderspark"
 description = "A small collection of ascii screensavers"
 edition     = "2021"
 license     = "GPL-3.0"
+repository  = "https://github.com/coderspark/asciisavers"
 
 [dependencies]
 crossterm = "0.28.1"

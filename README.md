@@ -27,6 +27,19 @@ Just run the following command:
 cargo install asciisavers
 ```
 
+Or build from source by first running:
+```
+git clone https://github.com/coderspark/asciisavers
+```
+then run the following to move into the asciisavers directory:
+```
+cd asciisavers
+```
+then compile with:
+```
+cargo build --release
+```
+
 
 ## Another fun thing to do with this
 Pipe it into lolcat to make it rainbow
