@@ -190,7 +190,7 @@ fn dvd() {
 fn main() {
     let args: Vec<String> = args().collect();
     if args.len() <= 1 {
-        panic!("Insufficient arguments. Usage:\nasciisavers dvd/toasters");
+        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters");
     }
     match args[1].as_str() {
         "toasters" => { toasters() },
