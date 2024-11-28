@@ -4,6 +4,7 @@ use std::{
     time::Duration,
     io::{stdout,Write},
     env::args,
+    process::exit,
 };
 use rand::Rng;
 
@@ -191,6 +192,7 @@ fn main() {
     let args: Vec<String> = args().collect();
     if args.len() <= 1 {
         println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters");
+        exit(0);
     }
     match args[1].as_str() {
         "toasters" => { toasters() },
