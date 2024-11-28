@@ -199,10 +199,10 @@ fn main() {
         "dvd" => { dvd() },
         "random" => {
             match rand::thread_rng().gen_range(0..2) {
-                1 => {
+                0 => {
                     dvd()
                 },
-                2 => {
+                1 => {
                     toasters()
                 },
                 _ => {
