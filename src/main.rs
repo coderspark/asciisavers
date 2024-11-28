@@ -191,12 +191,25 @@ fn dvd() {
 fn main() {
     let args: Vec<String> = args().collect();
     if args.len() <= 1 {
-        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters");
+        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/random");
         exit(0);
     }
     match args[1].as_str() {
         "toasters" => { toasters() },
         "dvd" => { dvd() },
-        _ => { println!("Incorrect Argument. Available arguments:\n dvd, toasters"); } 
+        "random" => {
+            match rand::thread_rng().gen_range(0..2) {
+                1 => {
+                    dvd()
+                },
+                2 => {
+                    toasters()
+                },
+                _ => {
+
+                }
+            }
+        },
+        _ => { println!("Incorrect Argument. Available arguments:\n dvd, toasters, random"); } 
     }
 }
