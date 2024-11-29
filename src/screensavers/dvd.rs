@@ -1,3 +1,8 @@
+/*
+DVD SCREENSAVER
+*/
+
+// Import shit
 use std::{
     thread,
     time::Duration,
