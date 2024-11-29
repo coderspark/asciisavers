@@ -192,11 +192,11 @@ fn dvd() {
 fn ball() {
     // Basic variables
     let mut pos;
-    let mut vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2));
+    let mut vel = (rand::thread_rng().gen_range(-1..=1), rand::thread_rng().gen_range(-1..=1));
     
     // cool while loop
     while vel.0 == 0 || vel.1 == 0 {
-        vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2)); // Randomizes until no values are 0
+        vel = (rand::thread_rng().gen_range(-1..=1), rand::thread_rng().gen_range(-1..=1)); // Randomizes until no values are 0
     }
     
     // terminal size
@@ -223,17 +223,17 @@ fn ball() {
         // Add the velocity to the position
         pos = (pos.0+vel.0, pos.1+vel.1); 
         // Print the new one
-        print!("\x1b[{};{}H{}██\x1b[0m", pos.1, pos.0, colours[colouridx]); 
+        print!("\x1b[{};{}H{}\x1b[0m", pos.1, pos.0, colours[colouridx]); 
         
         stdout.flush().unwrap(); // flush the stdout
 
         // check if the dvd hit an edge
-        if pos.0 >= tsize.0 as i32 - 16 || pos.0 <= 1 {
+        if pos.0 >= tsize.0 as i32 - 2 || pos.0 <= 1 {
             vel = (-vel.0, vel.1);
             // cornercount += 0.5;
             colouridx = rand::thread_rng().gen_range(0..7);
         } 
-        if pos.1 >= tsize.1 as i32 - 5 || pos.1 <= 1 {
+        if pos.1 >= tsize.1 as i32 - 1 || pos.1 <= 1 {
             vel = (vel.0, -vel.1);
             // cornercount += 0.5;
             colouridx = rand::thread_rng().gen_range(0..7);
@@ -249,7 +249,7 @@ fn ball() {
             }
         }
         // Wait
-        thread::sleep(Duration::from_millis(70));
+        thread::sleep(Duration::from_millis(30));
     }
     
     // boiler plate
