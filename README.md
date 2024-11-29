@@ -19,6 +19,13 @@ asciisavers toasters
 Contains:
 FLYING ASCII TOASTERS!!!
 
+### Bouncing Ball
+Run with:
+```
+asciisavers ball
+```
+Contains:
+A bouncing ball that is like the dvd but it never clears
 
 ## Installation guide
 

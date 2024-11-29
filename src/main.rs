@@ -29,24 +29,24 @@ use crossterm::{
 fn printtoaster(pos: (u16, u16), frame: i32) {
     let f1 = [
         ",~~,",
-        " \x1b[4m\\  \\\x1b[0m,~~,\x1b[0m",
-        "|\\\x1b[4m==/  /=\x1b[0m\\ ",
-        "| | \x1b[4m    \x1b[0m |",
+        " \x1b[4m\\  \\\x1b[24m,~~,",
+        "|\\\x1b[4m==/  /=\x1b[24m\\ ",
+        "| | \x1b[4m    \x1b[24m |",
         " \\|______|",
     ];
     let f2 = [
         "",
-        " \x1b[4m,~~,\x1b[0m____\x1b[0m",
-        "|\\\x1b[4m==,~~,=\x1b[0m\\ ",
-        "| | \x1b[4m    \x1b[0m |",
+        " \x1b[4m,~~,\x1b[24m____",
+        "|\\\x1b[4m==,~~,=\x1b[24m\\ ",
+        "| | \x1b[4m    \x1b[24m |",
         " \\|______|"
     ];
     let f3 = [
         "",
-        " ________\x1b[0m",
-        "|\\\x1b[4m=======\x1b[0m\\ ",
+        " ________\x1b[24m",
+        "|\\\x1b[4m=======\x1b[24m\\ ",
         "| | /  / |",
-        " \\|\x1b[4m'~~'\x1b[0m__|"
+        " \\|\x1b[4m'~~'\x1b[24m__|"
     ];
     match frame % 4 {
         0 => {
@@ -188,28 +188,102 @@ fn dvd() {
     stdout.execute(Show).unwrap();
     disable_raw_mode().unwrap();
 }
+
+fn ball() {
+    // Basic variables
+    let mut pos;
+    let mut vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2));
+    
+    // cool while loop
+    while vel.0 == 0 || vel.1 == 0 {
+        vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2)); // Randomizes until no values are 0
+    }
+    
+    // terminal size
+    let tsize = size().unwrap();
+
+    // basic elementry school math
+    pos = (tsize.0 as i32 / 2, tsize.1 as i32 / 2);
+        
+
+    // STDOUT WOO
+    let mut stdout = stdout();
+    
+    // Corner counter
+    // let mut cornercount: f32 = 0.0;
+    let colours = ["\x1b[38;2;255;61;61m","\x1b[38;2;255;200;61m","\x1b[38;2;255;255;61m","\x1b[38;2;61;255;61m","\x1b[38;2;61;255;255m","\x1b[38;2;61;61;255m","\x1b[38;2;255;61;255m"];
+    let mut colouridx = 0;
+
+    // boiler plate
+    stdout.execute(EnterAlternateScreen).unwrap();
+    stdout.execute(Clear(Purge)).unwrap();
+    stdout.execute(Hide).unwrap();
+    enable_raw_mode().unwrap();
+    loop { 
+        // Add the velocity to the position
+        pos = (pos.0+vel.0, pos.1+vel.1); 
+        // Print the new one
+        print!("\x1b[{};{}H{}██\x1b[0m", pos.1, pos.0, colours[colouridx]); 
+        
+        stdout.flush().unwrap(); // flush the stdout
+
+        // check if the dvd hit an edge
+        if pos.0 >= tsize.0 as i32 - 16 || pos.0 <= 1 {
+            vel = (-vel.0, vel.1);
+            // cornercount += 0.5;
+            colouridx = rand::thread_rng().gen_range(0..7);
+        } 
+        if pos.1 >= tsize.1 as i32 - 5 || pos.1 <= 1 {
+            vel = (vel.0, -vel.1);
+            // cornercount += 0.5;
+            colouridx = rand::thread_rng().gen_range(0..7);
+        }
+        // cornercount = cornercount.floor();
+        // print!("\x1b[1;1HCorner Hits: {:.0}", cornercount);
+
+        // BOILER PLATE
+        if poll(Duration::from_millis(0)).unwrap() {
+            let read = read().unwrap();
+            if let Event::Key(_) = read {
+                break; 
+            }
+        }
+        // Wait
+        thread::sleep(Duration::from_millis(70));
+    }
+    
+    // boiler plate
+    stdout.execute(LeaveAlternateScreen).unwrap();
+    stdout.execute(Show).unwrap();
+    disable_raw_mode().unwrap();
+}
+
 fn main() {
     let args: Vec<String> = args().collect();
     if args.len() <= 1 {
-        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/random");
+        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/ball/random");
         exit(0);
     }
     match args[1].as_str() {
         "toasters" => { toasters() },
         "dvd" => { dvd() },
+        "ball" => { ball() },
         "random" => {
-            match rand::thread_rng().gen_range(0..2) {
+            match rand::thread_rng().gen_range(0..3) {
                 0 => {
                     dvd()
                 },
                 1 => {
                     toasters()
                 },
+                2 => {
+                    ball()
+                },
                 _ => {
 
                 }
             }
         },
-        _ => { println!("Incorrect Argument. Available arguments:\n dvd, toasters, random"); } 
+        _ => { println!("Incorrect Argument. Available arguments:\n dvd, toasters, ball, random"); } 
     }
 }
