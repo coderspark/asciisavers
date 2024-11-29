@@ -30,18 +30,18 @@ use crossterm::{
 pub fn dvd() {
     // Basic variables
     let mut pos;
-    let mut vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2));
+    let mut vel = (rand::thread_rng().gen_range(-1..=1)*2, rand::thread_rng().gen_range(-1..=1));
     
     // cool while loop
     while vel.0 == 0 || vel.1 == 0 {
-        vel = (rand::thread_rng().gen_range(-2..=2), rand::thread_rng().gen_range(-2..=2)); // Randomizes until no values are 0
+        vel = (rand::thread_rng().gen_range(-1..=1)*2, rand::thread_rng().gen_range(-1..=1)); // Randomizes until no values are 0
     }
     
     // terminal size
     let tsize = size().unwrap();
 
     // basic elementry school math
-    pos = (tsize.0 as i32 / 2, tsize.1 as i32 / 2);
+    pos = (rand::thread_rng().gen_range(2..tsize.0-1) as i32, rand::thread_rng().gen_range(2..tsize.1-1) as i32);
         
 
     // STDOUT WOO
