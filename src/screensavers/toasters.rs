@@ -32,7 +32,8 @@ use crossterm::{
 // burn box
 struct Toaster {
     pub pos: (u16, u16),
-    frame: f32
+    frame: f32,
+    istoast: bool,
 }
 impl Toaster {
     pub fn new() -> Toaster {
@@ -42,7 +43,8 @@ impl Toaster {
         // return the burn box
         Toaster {
             pos: (tsize.0-10, rand::thread_rng().gen_range(1..tsize.1-5)),
-            frame: 0.0,   
+            frame: 0.0,
+            istoast: rand::thread_rng().gen_bool(0.5),
         } 
     }
     pub fn update(&mut self) {
@@ -68,34 +70,50 @@ impl Toaster {
             "| | /  / |",
             " \\|\x1b[4m'~~'\x1b[24m__|"
         ];
+
+        let toast = [
+            "",
+            " __________",
+            "|\\ ....... \\",
+            "\\ \\_\x1b[4m·····\x1b[0m___\\",
+            " \\|_________|"
+        ];
+
         // cool float stuff lmao
         self.frame += 0.5;
         // Move the toaster
         self.pos = (self.pos.0 - 1, self.pos.1);
         // Draw the correct frames
-        match self.frame.floor() as i32 % 4 {
-            0 => {
-                for i in 0..5 {
-                    print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f1[i as usize]);
-                }
-            },
-            1 => {
-                for i in 0..5 {
-                    print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f2[i as usize]);
-                }
-            },
-            2 => {
-                for i in 0..5 {
-                    print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f3[i as usize]);
-                }
-            },
-            3 => {
-                for i in 0..5 {
-                    print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f2[i as usize]);
-                }
-            },
-            _ => {}
-        }; 
+        if !self.istoast {
+            match self.frame.floor() as i32 % 4 {
+                0 => {
+                    for i in 0..5 {
+                        print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f1[i as usize]);
+                    }
+                },
+                1 => {
+                    for i in 0..5 {
+                        print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f2[i as usize]);
+                    }
+                },
+                2 => {
+                    for i in 0..5 {
+                        print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f3[i as usize]);
+                    }
+                },
+                3 => {
+                    for i in 0..5 {
+                        print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, f2[i as usize]);
+                    }
+                },
+                _ => {}
+            }; 
+        }
+        else {
+            for i in 0..5 {
+                print!("\x1b[{};{}H{}", i+1+self.pos.1, self.pos.0, toast[i as usize]);
+            }
+        }
     }
 }
 

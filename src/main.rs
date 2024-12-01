@@ -15,8 +15,8 @@ use rand::Rng;
 fn main() {
     let args: Vec<String> = args().collect();
     if args.len() <= 1 {
-        println!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/ball/random");
-        exit(0);
+        eprintln!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/ball/random");
+        exit(1);
     }
     match args[1].as_str() {
         "toasters" => { toasters() },

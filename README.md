@@ -17,7 +17,7 @@ Run with:
 asciisavers toasters
 ```
 Contains:
-FLYING ASCII TOASTERS!!!
+FLYING ASCII TOASTERS AND TOAST!!!!
 
 ### Bouncing Ball
 Run with:
