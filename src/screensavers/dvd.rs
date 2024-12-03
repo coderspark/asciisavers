@@ -72,7 +72,8 @@ pub fn dvd(cornercounter: bool, delay: u64) {
         print!("\x1b[{};{}H| |) \\ V /| |) |", pos.1+2, pos.0);
         print!("\x1b[{};{}H|___/ \\_/ |___/ ", pos.1+3, pos.0);
         print!("\x1b[{};{}H▄▄▄▄█▀▀▀▀▀▀█▄▄▄▄", pos.1+4, pos.0);
-        print!("\x1b[{};{}H    ▀▀▀▀▀▀▀▀    \x1b[0m", pos.1+5, pos.0); 
+        print!("\x1b[{};{}H    ▀▀▀▀▀▀▀▀    \x1b[0m", pos.1+5, pos.0);
+
         // check if the dvd hit an edge
         if pos.0 >= tsize.0 as i32 - 16 || pos.0 <= 1 {
             vel = (-vel.0, vel.1);

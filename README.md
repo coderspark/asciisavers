@@ -27,6 +27,16 @@ asciisavers ball
 Contains:
 A bouncing ball that is like the dvd but it never clears
 
+### Pipes
+Run with:
+```
+asciisavers pipes
+```
+Contains:
+Funny pipes that randomly spawn
+
+FULLY inspired by [pipes.sh](https://github.com/pipeseroni/pipes.sh)
+
 ## Installation guide
 
 Just run the following command: 

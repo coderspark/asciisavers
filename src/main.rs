@@ -22,9 +22,18 @@ enum Screensaver {
     Ball {
         #[arg(short = 'd', long = "delay", help = "The delay between frames in milliseconds", value_name = "DELAY", default_value = "30")]
         delay: u64,
+        #[arg(short = 'f', long = "fancy", help = "Fancy mode. Requires a Nerd Font")]
+        fancy: bool,
+        #[arg(short = 'r', long = "reset", help = "Amount of characters needed until a reset", value_name = "CHARS", default_value = "2000")]
+        reset: u64,
     },
     Pipes {
-
+        #[arg(short = 't', long = "type", action = clap::ArgAction::Append, help = "The type of pipes used (Can be used multiple times)", value_name = "TYPE", default_values_t = vec![0])]
+        types: Vec<usize>,
+        #[arg(short = 'p', long = "pipes", help = "The amount of pipes", value_name = "AMOUNT", default_value = "1")]
+        amount: u32,
+        #[arg(short = 'f', long = "framerate", help = "The delay between movements", value_name = "DELAY", default_value = "20")]
+        delay: u64,
     },
 }
 
@@ -53,10 +62,14 @@ fn main() {
             dvd(cornercounter, delay)
         },
         Screensaver::Ball     {
-            delay
+            delay, fancy, reset
         } => {
-            ball(delay) 
+            ball(delay, fancy, reset) 
         },
-        Screensaver::Pipes    {} => { pipes() },
+        Screensaver::Pipes    {
+            types, amount, delay
+        } => { 
+            pipes(types, amount, delay) 
+        },
     }
 }
