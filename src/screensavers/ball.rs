@@ -75,7 +75,7 @@ impl Ball {
     }
 }
 
-pub fn ball() {  
+pub fn ball(delay: u64) {  
     // terminal size
     let tsize = size().unwrap();
 
@@ -106,7 +106,7 @@ pub fn ball() {
             }
         }
         // Wait
-        thread::sleep(Duration::from_millis(30));
+        thread::sleep(Duration::from_millis(delay));
     }
     
     // boiler plate

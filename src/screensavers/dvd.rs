@@ -27,7 +27,7 @@ use crossterm::{
     ExecutableCommand,
 };
 
-pub fn dvd() {
+pub fn dvd(cornercounter: bool, delay: u64) {
     // Basic variables
     let mut pos;
     let mut vel = (rand::thread_rng().gen_range(-1..=1)*2, rand::thread_rng().gen_range(-1..=1));
@@ -41,8 +41,7 @@ pub fn dvd() {
     let tsize = size().unwrap();
 
     // basic elementry school math
-    pos = (rand::thread_rng().gen_range(2..tsize.0-1) as i32, rand::thread_rng().gen_range(2..tsize.1-1) as i32);
-        
+    pos = (rand::thread_rng().gen_range(2..tsize.0-17) as i32, rand::thread_rng().gen_range(2..tsize.1-6) as i32); 
 
     // STDOUT WOO
     let mut stdout = stdout();
@@ -73,10 +72,7 @@ pub fn dvd() {
         print!("\x1b[{};{}H| |) \\ V /| |) |", pos.1+2, pos.0);
         print!("\x1b[{};{}H|___/ \\_/ |___/ ", pos.1+3, pos.0);
         print!("\x1b[{};{}H▄▄▄▄█▀▀▀▀▀▀█▄▄▄▄", pos.1+4, pos.0);
-        print!("\x1b[{};{}H    ▀▀▀▀▀▀▀▀    \x1b[0m", pos.1+5, pos.0);
-        
-        stdout.flush().unwrap(); // flush the stdout
-
+        print!("\x1b[{};{}H    ▀▀▀▀▀▀▀▀    \x1b[0m", pos.1+5, pos.0); 
         // check if the dvd hit an edge
         if pos.0 >= tsize.0 as i32 - 16 || pos.0 <= 1 {
             vel = (-vel.0, vel.1);
@@ -89,7 +85,10 @@ pub fn dvd() {
             colouridx = rand::thread_rng().gen_range(0..7);
         }
         cornercount = cornercount.floor();
-        print!("\x1b[1;1HCorner Hits: {:.0}", cornercount);
+        if !cornercounter {
+            print!("\x1b[1;1HCorner Hits: {:.0}", cornercount);
+        }
+         stdout.flush().unwrap(); // flush the stdout
 
         // BOILER PLATE
         if poll(Duration::from_millis(0)).unwrap() {
@@ -99,7 +98,7 @@ pub fn dvd() {
             }
         }
         // Wait
-        thread::sleep(Duration::from_millis(70));
+        thread::sleep(Duration::from_millis(delay));
     }
     
     // boiler plate

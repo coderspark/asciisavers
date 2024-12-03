@@ -3,41 +3,60 @@ use screensavers::{
     toasters::toasters,
     ball::ball,
     dvd::dvd,
+    pipes::pipes,
 };
 
-use std::{ 
-    env::args,
-    process::exit,
-};
-use rand::Rng;
+use clap::{Parser, Subcommand};
 
+#[derive(Subcommand)]
+enum Screensaver {
+    DVD {
+        #[arg(short = 'C', long = "disablecount", help = "Toggle the corner counter")]
+        cornercounter: bool,
+        #[arg(short = 'd', long = "delay", help = "The delay between frames in milliseconds", value_name = "DELAY", default_value = "70")]
+        delay: u64,
+    },
+    Toasters {
+
+    },
+    Ball {
+        #[arg(short = 'd', long = "delay", help = "The delay between frames in milliseconds", value_name = "DELAY", default_value = "30")]
+        delay: u64,
+    },
+    Pipes {
+
+    },
+}
+
+#[derive(Parser)]
+#[command(author, about, long_about = None)]
+struct Cli {
+    /// Subcommand to specify the screensaver type
+    #[command(subcommand)]
+    command: Screensaver,
+    
+    #[arg(short, long, help = "Print version")]
+    version: bool,
+}
 
 fn main() {
-    let args: Vec<String> = args().collect();
-    if args.len() <= 1 {
-        eprintln!("Insufficient arguments. Usage:\nasciisavers dvd/toasters/ball/random");
-        exit(1);
-    }
-    match args[1].as_str() {
-        "toasters" => { toasters() },
-        "dvd" => { dvd() },
-        "ball" => { ball() },
-        "random" => {
-            match rand::thread_rng().gen_range(0..3) {
-                0 => {
-                    dvd()
-                },
-                1 => {
-                    toasters()
-                },
-                2 => {
-                    ball()
-                },
-                _ => {
+    let cli = Cli::parse();
+    match cli.command {
+        Screensaver::Toasters {
 
-                }
-            }
+        } => { 
+            toasters() 
         },
-        _ => { println!("Incorrect Argument. Available arguments:\n dvd, toasters, ball, random"); } 
+        Screensaver::DVD      { 
+            cornercounter, delay
+        } => { 
+            dvd(cornercounter, delay)
+        },
+        Screensaver::Ball     {
+            delay
+        } => {
+            ball(delay) 
+        },
+        Screensaver::Pipes    {} => { pipes() },
     }
 }
