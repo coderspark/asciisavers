@@ -41,7 +41,7 @@ enum Screensaver {
         types: Vec<usize>,
         #[arg(short = 'p', long = "pipes", help = "The amount of pipes", value_name = "AMOUNT", default_value = "1")]
         amount: u32,
-        #[arg(short = 'f', long = "framerate", help = "The delay between movements", value_name = "DELAY", default_value = "20")]
+        #[arg(short = 'd', long = "delay", help = "The delay between movements", value_name = "DELAY", default_value = "20")]
         delay: u64,
         #[arg(short = 'R', long = "randomize", help = "Randomize the starting position of the pipes")]
         randomize: bool,
