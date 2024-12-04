@@ -1,12 +1,12 @@
-mod screensavers;
-use screensavers::{
+pub mod screensavers;
+pub use screensavers::{
     toasters::toasters,
     ball::ball,
     dvd::dvd,
     pipes::pipes,
 };
 
-use clap::{Parser, Subcommand};
+pub use clap::{Parser, Subcommand};
 
 #[derive(Subcommand)]
 enum Screensaver {
@@ -41,7 +41,7 @@ enum Screensaver {
 
 #[derive(Parser)]
 #[command(author, about, long_about = None)]
-struct Cli {
+pub struct Cli {
     /// Subcommand to specify the screensaver type
     #[command(subcommand)]
     command: Screensaver,

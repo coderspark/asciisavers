@@ -1,3 +1,9 @@
+//! The windows pipes screensaver
+//!
+//! Inspired by pipes.sh
+//!
+//! # This needs to be written
+
 use std::{
     thread,
     time::Duration,
