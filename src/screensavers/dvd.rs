@@ -1,5 +1,31 @@
 /*
-DVD SCREENSAVER
+DVD Screensaver
+
+# Explanation
+The dvd function will take argumets for disabling the corner counter and for setting the delay
+It sets the position and velocity of the dvd randomizing the velocity until it's no longer 0 on any directions
+It will then get the terminal size
+
+It then adds a corner counter into memory that is a float for wierd flooring magic
+
+It then uses crossterm stuff to do the following:
+Enter an Alternate Screen,
+Clear the Alternate Screen,
+and then enables terminal Raw Mode
+
+and then starts the loop
+
+## In the loop
+It will clear the last dvd by just printing spaces then prints the new dvd.
+If the cornercounter bool is false it will then print the corner counter
+It handels bounce detection by just checking it's position and for each axis it bounces on it increases cornercount by 0.5
+Then it will floor the cornercounter so that it tracks corners correctly
+
+then it flushes the standard output with `stdout.flush().unwrap()`
+
+Then it checks for any terminal input with crossterm and then if it does then it exits the loop and returns back to the regular terminal
+
+If there is no input then it will wait the delay it was given in milliseconds
 */
 
 // Import shit
