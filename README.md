@@ -19,7 +19,7 @@ cargo install asciisavers
 
 ## 🧠 Features
 <details>
-<summary><h3>DVD</h3></summary>
+<summary>DVD</summary>
 
 Run it with the following command:
 ```sh
@@ -32,7 +32,7 @@ asciisavers dvd
 
 </details>
 <details>
-<summary><h3>Flying Toasters</h3></summary>
+<summary>Flying Toasters</summary>
   
 Run it with the following command:
 ```sh
@@ -41,7 +41,7 @@ asciisavers toasters
 </details>
 
 <details>
-<summary><h3>Bouncing Ball</h3></summary>
+<summary>Bouncing Ball</summary>
   
 Run it with the following command:
 ```sh
@@ -56,7 +56,7 @@ asciisavers ball
 </details>
 
 <details>
-<summary><h3>Pipes.rs</h3></summary>
+<summary>Pipes.rs</summary>
   
 Run it with the following command:
 ```sh
