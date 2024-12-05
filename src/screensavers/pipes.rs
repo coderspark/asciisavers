@@ -28,7 +28,6 @@ use crossterm::{
     ExecutableCommand,
 };
 
-static mut SCREEN: Vec<Vec<usize>> = vec![];
 static mut STATS: [usize; 8]       = [0; 8];
 
 struct Pipe {
@@ -57,7 +56,7 @@ impl Pipe {
         }
     }
 
-    pub fn update(&mut self, colours: &Vec<usize>) {
+    pub fn update(&mut self, colours: &Vec<usize>, screen: &mut Vec<Vec<usize>>) {
         self.pos = (self.pos.0 + self.vel.0, self.pos.1 + self.vel.1);
         let charset = [
             "  ┓┛  ┏┗┗┛  ┏┓  ━┃T",        // T H I C C
@@ -101,14 +100,14 @@ impl Pipe {
             }
         }
         unsafe {
-            if SCREEN[self.pos.1 as usize][self.pos.0 as usize] == 8 {
+            if screen[self.pos.1 as usize][self.pos.0 as usize] == 8 {
                 STATS[self.colouridx] += 1;
-                SCREEN[self.pos.1 as usize][self.pos.0 as usize] = self.colouridx;
+                screen[self.pos.1 as usize][self.pos.0 as usize] = self.colouridx;
             }
             else {
                 STATS[self.colouridx] += 1;
-                STATS[SCREEN[self.pos.1 as usize][self.pos.0 as usize]] -= 1;
-                SCREEN[self.pos.1 as usize][self.pos.0 as usize] = self.colouridx;
+                STATS[screen[self.pos.1 as usize][self.pos.0 as usize]] -= 1;
+                screen[self.pos.1 as usize][self.pos.0 as usize] = self.colouridx;
             }
         }
     }
@@ -136,21 +135,19 @@ fn convert(oldpos: (i32, i32), tsize: (u16, u16)) -> (i32, i32) {
 pub fn pipes(types: Vec<usize>, amount: u32, delay: u64, randomize: bool, colours: Vec<usize>, stats: bool) {
     // terminal size
     let tsize = size().unwrap();
-    
-    unsafe {
-        for y in 0..=tsize.1 {
-            SCREEN.push(Vec::new());
-            for _ in 0..=tsize.0 {
-                SCREEN[y as usize].push(8);
-            }
-        }
-    }
      
     // STDOUT WOO
     let mut stdout = stdout();
     let mut pipes: Vec<Pipe> = vec![];
     for _ in 0..amount {
         pipes.push(Pipe::new(&types, randomize, colours.len()));
+    }
+    let mut screen = vec![];
+    for y in 0..=tsize.1 {
+        screen.push(Vec::new());
+        for _ in 0..=tsize.0 {
+            screen[y as usize].push(8);
+        }
     }
     // boiler plate
     stdout.execute(EnterAlternateScreen).unwrap();
@@ -159,7 +156,7 @@ pub fn pipes(types: Vec<usize>, amount: u32, delay: u64, randomize: bool, colour
     enable_raw_mode().unwrap();
     loop {
         for i in 0..pipes.len() {
-            pipes[i].update(&colours);
+            pipes[i].update(&colours, &mut screen);
             if (pipes[i].pos.0 == 1 && pipes[i].vel == (-1, 0)) || (pipes[i].pos.0 as u16 == tsize.0 && pipes[i].vel == (1, 0)) || (pipes[i].pos.1 == 1 && pipes[i].vel == (0, -1)) || (pipes[i].pos.1 as u16 == tsize.1 && pipes[i].vel == (0, 1)) {
                 if !randomize{
                     let oldpos = pipes[i].pos;
@@ -179,7 +176,7 @@ pub fn pipes(types: Vec<usize>, amount: u32, delay: u64, randomize: bool, colour
         if !stats {
             unsafe {
                 for i in 0..8 {
-                    print!("\x1b[{};1H\x1b[3{i}m██\x1b[0m Points: {:3}", i + 1, STATS[i]);
+                    print!("\x1b[{};1H\x1b[3{}m██\x1b[0m Points: {:04}", i + 1, i, STATS[i]);
                 }
             }
         }
