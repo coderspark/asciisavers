@@ -1,6 +1,6 @@
 [package]
 name        = "asciisavers"
-version     = "0.3.5"
+version     = "0.3.6"
 author      = "Coderspark"
 description = "A small collection of ascii screensavers"
 edition     = "2021"

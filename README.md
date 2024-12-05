@@ -75,7 +75,7 @@ asciisavers pipes
 ## 💭 Inspired By
 - [Pipes.sh](https://github.com/pipeseroni/pipes.sh)
 - [Cmatrix](https://github.com/abishekvashok/cmatrix)
-- [ASCIIquarium](https://github.com/abishekvashok/cmatrix)
+- [ASCIIquarium](https://github.com/cmatsuoka/asciiquarium)
 
 ## 🤝 Contributing
 We are okay with contributors of any skill level! If you have an idea for a screensaver or want to make a documention, go ahead!
