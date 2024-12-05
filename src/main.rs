@@ -4,6 +4,7 @@ pub use screensavers::{
     ball::ball,
     dvd::dvd,
     pipes::pipes,
+    raycaster::raycaster,
 };
 
 pub use clap::{Parser, Subcommand, CommandFactory};
@@ -50,6 +51,10 @@ enum Screensaver {
         #[arg(short = 's', long = "stats", help = "Disables the stats in the corner")]
         stats: bool,
     },
+    #[command(about = "The old windows 3d maze screensaver", name = "3dmaze")]
+    Raycaster {
+
+    },
 }
 
 #[derive(Parser)]
@@ -91,6 +96,10 @@ fn main() {
             } => { 
                 pipes(types, amount, delay, randomize, colours, stats) 
             },
+            _ => {
+                
+            },
+            
         }
     }
     else {
