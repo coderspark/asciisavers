@@ -157,7 +157,7 @@ pub fn pipes(types: Vec<usize>, amount: u32, delay: u64, randomize: bool, colour
     loop {
         for i in 0..pipes.len() {
             pipes[i].update(&colours, &mut screen);
-            if (pipes[i].pos.0 == 1 && pipes[i].vel == (-1, 0)) || (pipes[i].pos.0 as u16 == tsize.0 && pipes[i].vel == (1, 0)) || (pipes[i].pos.1 == 1 && pipes[i].vel == (0, -1)) || (pipes[i].pos.1 as u16 == tsize.1 && pipes[i].vel == (0, 1)) {
+            if (pipes[i].pos.0 <= 1 && pipes[i].vel == (-1, 0)) || (pipes[i].pos.0 as u16 >= tsize.0 && pipes[i].vel == (1, 0)) || (pipes[i].pos.1 <= 1 && pipes[i].vel == (0, -1)) || (pipes[i].pos.1 as u16 >= tsize.1 && pipes[i].vel == (0, 1)) {
                 if !randomize{
                     let oldpos = pipes[i].pos;
                     let oldvel = pipes[i].vel;

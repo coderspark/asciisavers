@@ -51,7 +51,7 @@ enum Screensaver {
         #[arg(short = 's', long = "stats", help = "Disables the stats in the corner")]
         stats: bool,
     },
-    #[command(about = "The old windows 3d maze screensaver", name = "3dmaze")]
+    #[command(about = "The old windows 3d maze screensaver (HEAVY WIP)", name = "3dmaze")]
     Raycaster {
 
     },
