@@ -96,9 +96,11 @@ fn main() {
             } => { 
                 pipes(types, amount, delay, randomize, colours, stats) 
             },
-            _ => {
-                
-            },
+            Screensaver::Raycaster { 
+
+            } => {
+                raycaster()
+            }
             
         }
     }

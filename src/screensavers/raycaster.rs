@@ -27,12 +27,12 @@ fn getraycastangle(dir: f32, idx: u16, tsize: (u16, u16)) -> f32 {
 }
 
 fn raycast(map: [[usize; 24]; 24], pos: (usize, usize), angle: f32) -> (usize, f32) {
-    let motion = ((angle * PI/180.0).sin() / 10.0, -(angle * PI/180.0).cos() / 10.0);
+    let motion = ((angle * PI/180.0).sin() / 100.0, -(angle * PI/180.0).cos() / 100.0);
     let mut currentpos = (pos.0 as f32, pos.1 as f32);
     let mut dist: f32 = 0.0;
     while map[currentpos.1.floor() as usize][currentpos.0.floor() as usize] == 0 {
         currentpos = (currentpos.0 + motion.0, currentpos.1 + motion.1);
-        dist += 0.1;
+        dist += 0.01;
     }
 
     (map[currentpos.1.floor() as usize][currentpos.0.floor() as usize], dist)
