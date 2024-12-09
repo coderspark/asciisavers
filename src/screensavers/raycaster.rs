@@ -16,17 +16,25 @@ use std::{
 };
 
 fn getraycastangle(dir: f32, idx: u16, tsize: (u16, u16)) -> f32 {
-    dir - 45.0 + idx as f32 * (90.0 / (tsize.0 as f32 - 1.0)) // Basic grade 9 math
+    dir - 45.0 / 2.0 + idx as f32 * (90.0 / (tsize.0 as f32 - 1.0)) // Basic grade 9 math
 }
 
-fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32) {
+fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32, f32) {
     let motion = (
         (angle * PI / 180.0).sin() / 100.0,
         -(angle * PI / 180.0).cos() / 100.0,
     );
     let mut currentpos = (pos.0 as f32, pos.1 as f32);
     let mut dist: f32 = 0.0;
+    let mut side = 2.0;
+
     while map[currentpos.1.floor() as usize][currentpos.0.floor() as usize] == 0 {
+        if motion.0.abs() < motion.1.abs() {
+            side = 1.0;
+        }
+        else {
+            side = 2.0;
+        }
         currentpos = (currentpos.0 + motion.0, currentpos.1 + motion.1);
         dist += 0.01;
     }
@@ -36,6 +44,7 @@ fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32) 
             .try_into()
             .unwrap(),
         dist,
+        side,
     )
 }
 
@@ -54,15 +63,15 @@ fn fulldraw(map: &Vec<Vec<u32>>, playerpos: (usize, usize), playerdir: f32, tsiz
     }
 
     let colours = [
-        (000, 000, 000),
-        (255, 061, 061),
-        (061, 255, 061),
-        (061, 061, 255),
-        (255, 255, 255),
-        (255, 255, 061),
+        (000.0, 000.0, 000.0),
+        (255.0, 061.0, 061.0),
+        (061.0, 255.0, 061.0),
+        (061.0, 061.0, 255.0),
+        (255.0, 255.0, 255.0),
+        (255.0, 255.0, 061.0),
     ];
 
-    let heightthreashhold = (tsize.1 as f32 * 1.5) as i32;
+    let heightthreashhold = tsize.1 as f32 * 1.5;
     let width = 1;
 
     let mut angles = vec![];
@@ -77,13 +86,13 @@ fn fulldraw(map: &Vec<Vec<u32>>, playerpos: (usize, usize), playerdir: f32, tsiz
 
     let mut horizontal = 1;
     for ray in rays {
-        for vert in 0..=(heightthreashhold / ray.1 as i32) {
+        for vert in 0..=(heightthreashhold / ray.1) as i32 {
             print!(
                 "\x1b[{};{horizontal}H\x1b[38;2;{};{};{}m{}",
-                tsize.1 as i32 / 2 - ((heightthreashhold / ray.1 as i32) / 2) + vert,
-                (255.0 / ray.1 * colours[ray.0].0 as f32 / 255.0) as i32,
-                (255.0 / ray.1 * colours[ray.0].1 as f32 / 255.0) as i32,
-                (255.0 / ray.1 * colours[ray.0].2 as f32 / 255.0) as i32,
+                tsize.1 as i32 / 2 - ((heightthreashhold / ray.1) as i32 / 2) + vert,
+                (255.0 / ray.2 * colours[ray.0].0 / 255.0).floor() as i32,
+                (255.0 / ray.2 * colours[ray.0].1 / 255.0).floor() as i32,
+                (255.0 / ray.2 * colours[ray.0].2 / 255.0).floor() as i32,
                 "█".repeat(width as usize)
             );
         }
