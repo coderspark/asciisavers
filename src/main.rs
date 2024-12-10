@@ -1,13 +1,9 @@
 pub mod screensavers;
 pub use screensavers::{
-    toasters::toasters,
-    ball::ball,
-    dvd::dvd,
-    pipes::pipes,
-    raycaster::raycaster,
+    ball::ball, dvd::dvd, pipes::pipes, raycaster::raycaster, toasters::toasters,
 };
 
-pub use clap::{Parser, Subcommand, CommandFactory};
+pub use clap::{CommandFactory, Parser, Subcommand};
 
 use std::process::exit;
 
@@ -17,22 +13,38 @@ enum Screensaver {
     DVD {
         #[arg(short = 'C', long = "disablecount", help = "Toggle the corner counter")]
         cornercounter: bool,
-        #[arg(short = 'd', long = "delay", help = "The delay between frames in milliseconds", value_name = "DELAY", default_value = "70")]
+        #[arg(
+            short = 'd',
+            long = "delay",
+            help = "The delay between frames in milliseconds",
+            value_name = "DELAY",
+            default_value = "70"
+        )]
         delay: u64,
     },
 
     #[command(about = "Flying Toasters from afterdark")]
-    Toasters {
-
-    },
+    Toasters {},
 
     #[command(about = "Spinoff of the windows ball screensavers")]
     Ball {
-        #[arg(short = 'd', long = "delay", help = "The delay between frames in milliseconds", value_name = "DELAY", default_value = "30")]
+        #[arg(
+            short = 'd',
+            long = "delay",
+            help = "The delay between frames in milliseconds",
+            value_name = "DELAY",
+            default_value = "30"
+        )]
         delay: u64,
         #[arg(short = 'f', long = "fancy", help = "Fancy mode. Requires a Nerd Font")]
         fancy: bool,
-        #[arg(short = 'r', long = "reset", help = "Amount of characters needed until a reset", value_name = "CHARS", default_value = "2000")]
+        #[arg(
+            short = 'r',
+            long = "reset",
+            help = "Amount of characters needed until a reset",
+            value_name = "CHARS",
+            default_value = "2000"
+        )]
         reset: u64,
     },
 
@@ -40,21 +52,38 @@ enum Screensaver {
     Pipes {
         #[arg(short = 't', long = "type", action = clap::ArgAction::Append, help = "The type of pipes used (Can be used multiple times)", value_name = "TYPE", default_values_t = vec![0])]
         types: Vec<usize>,
-        #[arg(short = 'p', long = "pipes", help = "The amount of pipes", value_name = "AMOUNT", default_value = "1")]
+        #[arg(
+            short = 'p',
+            long = "pipes",
+            help = "The amount of pipes",
+            value_name = "AMOUNT",
+            default_value = "1"
+        )]
         amount: u32,
-        #[arg(short = 'd', long = "delay", help = "The delay between movements", value_name = "DELAY", default_value = "20")]
+        #[arg(
+            short = 'd',
+            long = "delay",
+            help = "The delay between movements",
+            value_name = "DELAY",
+            default_value = "20"
+        )]
         delay: u64,
-        #[arg(short = 'R', long = "randomize", help = "Randomize the starting position of the pipes")]
+        #[arg(
+            short = 'R',
+            long = "randomize",
+            help = "Randomize the starting position of the pipes"
+        )]
         randomize: bool,
         #[arg(short = 'c', long = "colour", help = "Colours 0-7 (Can be used multiple times)", action = clap::ArgAction::Append, value_name = "COLOR", default_values_t = vec![0, 1, 2, 3, 4, 5, 6, 7])]
         colours: Vec<usize>,
         #[arg(short = 's', long = "stats", help = "Disables the stats in the corner")]
         stats: bool,
     },
-    #[command(about = "The old windows 3d maze screensaver (HEAVY WIP)", name = "3dmaze")]
-    Raycaster {
-
-    },
+    #[command(
+        about = "The old windows 3d maze screensaver (HEAVY WIP)",
+        name = "3dmaze"
+    )]
+    Raycaster {},
 }
 
 #[derive(Parser)]
@@ -63,7 +92,7 @@ pub struct Cli {
     /// Subcommand to specify the screensaver type
     #[command(subcommand)]
     command: Option<Screensaver>,
-    
+
     #[arg(short = 'v', long = "version", help = "Print the version and exit")]
     version: bool,
 }
@@ -76,35 +105,27 @@ fn main() {
     }
     if let Some(command) = cli.command {
         match command {
-            Screensaver::Toasters {
-
-            } => { 
-                toasters() 
-            },
-            Screensaver::DVD      { 
-                cornercounter, delay
-            } => { 
-                dvd(cornercounter, delay)
-            },
-            Screensaver::Ball     {
-                delay, fancy, reset
-            } => {
-                ball(delay, fancy, reset) 
-            },
-            Screensaver::Pipes    {
-                types, amount, delay, randomize, colours, stats
-            } => { 
-                pipes(types, amount, delay, randomize, colours, stats) 
-            },
-            Screensaver::Raycaster { 
-
-            } => {
-                raycaster()
-            }
-            
+            Screensaver::Toasters {} => toasters(),
+            Screensaver::DVD {
+                cornercounter,
+                delay,
+            } => dvd(cornercounter, delay),
+            Screensaver::Ball {
+                delay,
+                fancy,
+                reset,
+            } => ball(delay, fancy, reset),
+            Screensaver::Pipes {
+                types,
+                amount,
+                delay,
+                randomize,
+                colours,
+                stats,
+            } => pipes(types, amount, delay, randomize, colours, stats),
+            Screensaver::Raycaster {} => raycaster(),
         }
-    }
-    else {
+    } else {
         let mut cmd = Cli::command();
         cmd.print_help().unwrap();
         println!();
