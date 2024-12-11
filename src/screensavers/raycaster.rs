@@ -9,7 +9,6 @@ use crossterm::{
 };
 
 use std::{
-    f32::consts::PI,
     io::{stdout, Write},
     thread,
     time::Duration,
@@ -21,8 +20,8 @@ fn getraycastangle(dir: f32, idx: u16, tsize: (u16, u16)) -> f32 {
 
 fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32, f32) {
     let motion = (
-        (angle * PI / 180.0).sin() / 100.0,
-        -(angle * PI / 180.0).cos() / 100.0,
+         angle.to_radians().sin() / 100.0,
+        -angle.to_radians().cos() / 100.0,
     );
     let mut currentpos = (pos.0 as f32, pos.1 as f32);
     let mut dist: f32 = 0.0;
@@ -32,7 +31,7 @@ fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32, 
         if motion.0.abs() < motion.1.abs() {
             side = 1.0;
         } else {
-            side = 2.0;
+            side = 1.7;
         }
         currentpos = (currentpos.0 + motion.0, currentpos.1 + motion.1);
         dist += 0.01;
@@ -48,29 +47,14 @@ fn raycast(map: Vec<Vec<u32>>, pos: (usize, usize), angle: f32) -> (usize, f32, 
 }
 
 fn fulldraw(map: &Vec<Vec<u32>>, playerpos: (usize, usize), playerdir: f32, tsize: (u16, u16)) {
-    let mut stdout = stdout();
-
-    print!("\x1b[48;2;31;31;31m");
-    stdout.execute(Clear(Purge)).unwrap();
-    print!("\x1b[0m");
-    for i in 0..tsize.1 / 2 {
-        print!(
-            "\x1b[{};1H\x1b[48;2;61;61;61m{}\x1b[0m",
-            i + 1,
-            " ".repeat(tsize.0 as usize)
-        );
-    }
+    let mut stdout = stdout(); 
 
     let colours = [
         (000.0, 000.0, 000.0),
-        (255.0, 061.0, 061.0),
-        (061.0, 255.0, 061.0),
-        (061.0, 061.0, 255.0),
-        (255.0, 255.0, 255.0),
-        (255.0, 255.0, 061.0),
+        (119.0, 7.0, 5.0),
     ];
 
-    let heightthreashhold = tsize.1 as f32 * 1.5;
+    let heightthreashhold = tsize.1 as f32 * 4.0;
     let width = 1;
 
     let mut angles = vec![];
@@ -85,15 +69,33 @@ fn fulldraw(map: &Vec<Vec<u32>>, playerpos: (usize, usize), playerdir: f32, tsiz
 
     let mut horizontal = 1;
     for ray in rays {
-        for vert in 0..=(heightthreashhold / ray.1) as i32 {
-            print!(
-                "\x1b[{};{horizontal}H\x1b[38;2;{};{};{}m{}",
-                tsize.1 as i32 / 2 - ((heightthreashhold / ray.1) as i32 / 2) + vert,
-                (255.0 / ray.2 * colours[ray.0].0 / 255.0).floor() as i32,
-                (255.0 / ray.2 * colours[ray.0].1 / 255.0).floor() as i32,
-                (255.0 / ray.2 * colours[ray.0].2 / 255.0).floor() as i32,
-                "█".repeat(width as usize)
-            );
+        for vert in 0..=tsize.1 as i32 {
+            if vert >= tsize.1 as i32 / 2 - (heightthreashhold / ray.1) as i32 / 2 && vert <= tsize.1 as i32 / 2 + (heightthreashhold / ray.1) as i32 / 2 {
+                print!(
+                    "\x1b[{};{horizontal}H\x1b[38;2;{};{};{}m{}",
+                    vert,
+                    (255.0 / ray.2 * colours[ray.0].0 / 255.0).floor() as i32,
+                    (255.0 / ray.2 * colours[ray.0].1 / 255.0).floor() as i32,
+                    (255.0 / ray.2 * colours[ray.0].2 / 255.0).floor() as i32,
+                    "█".repeat(width as usize)
+                );
+            }
+            else {
+                if vert <= tsize.1 as i32 / 2{
+                    print!(
+                        "\x1b[{};{horizontal}H\x1b[38;2;200;200;200m{}",
+                        vert,
+                        "█".repeat(width as usize)
+                    );
+                }
+                else {
+                    print!(
+                        "\x1b[{};{horizontal}H\x1b[38;2;190;131;63m{}",
+                        vert,
+                        "█".repeat(width as usize)
+                    );
+                }
+            }
         }
         horizontal += width;
     }
@@ -122,46 +124,44 @@ pub fn raycaster() {
 
     stdout.execute(EnterAlternateScreen).unwrap();
     stdout.execute(Hide).unwrap();
+    print!("\x1b[48;2;190;131;63m");
+    stdout.execute(Clear(Purge)).unwrap();
+    print!("\x1b[0m");
+    for i in 0..tsize.1 / 2 {
+        print!(
+            "\x1b[{};1H\x1b[48;2;200;200;200m{}\x1b[0m",
+            i + 1,
+            " ".repeat(tsize.0 as usize)
+        );
+    }
     enable_raw_mode().unwrap();
     let map = [
         [
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        ],
+        [
+            1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
         ],
         [
-            1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1,
-        ],
-        [
-            1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0, 1,
-        ],
-        [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        ],
-        [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        ],
-        [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        ],
-        [
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1,
         ],
         [
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -173,32 +173,44 @@ pub fn raycaster() {
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 0, 0, 0, 0, 5, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
-            1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        ],
+        [
+            1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        ],
+        [
+            1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        ],
+        [
+            1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        ],
+        [
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         ],
         [
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         ],
     ];
 
-    let factor = 1;
+    let factor = 2;
     let enlarged = enlarge(factor, map.iter().map(|r| r.to_vec()).collect());
 
     let playerpos = (enlarged[0].len() / 2, enlarged.len() / 2);
